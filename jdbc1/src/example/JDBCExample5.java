@@ -43,19 +43,18 @@ public class JDBCExample5 {
 			// 부서명 입력받기
 			System.out.println("=== 해당 부서에 근무하는 직원 조회 ===");
 			
-			System.out.print("부서명 : ");
-			String dept = sc.next();
+			System.out.print("부서명 입력 : ");
+			String input = sc.next();
 			
 		/* 3. SQL 작성 */
-			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT E.EMP_ID, E.EMP_NAME, D.DEPT_TITLE, J.JOB_NAME ");
-			sb.append("FROM EMPLOYEE E ");
-			sb.append("JOIN DEPARTMENT D ON (E.DEPT_CODE = D.DEPT_ID) ");
-			sb.append("JOIN JOB J ON (E.JOB_CODE = J.JOB_CODE) ");
-			sb.append("WHERE DEPT_TITLE = '");
-			sb.append(dept);
-			sb.append("' ORDER BY J.JOB_CODE ASC ");
-			String sql = sb.toString();
+			String sql = String.format("""
+					SELECT E.EMP_ID, E.EMP_NAME, D.DEPT_TITLE, J.JOB_NAME 
+					FROM EMPLOYEE E
+					JOIN JOB J ON (E.JOB_CODE = J.JOB_CODE) 
+					JOIN DEPARTMENT D ON (E.DEPT_CODE = D.DEPT_ID)
+					WHERE DEPT_TITLE = '%s'
+					ORDER BY E.JOB_CODE ASC 	
+										""", input);
 			
 		/* 4. sql을 전달하고 결과를 받아 올 Statement 객체 생성 */
 			stmt = conn.createStatement();
@@ -71,10 +70,10 @@ public class JDBCExample5 {
 
 			while(rs.next()) {
 				
-				String empId = rs.getString("E.EMP_ID");
-				String empName = rs.getString("E.EMP_NAME");
-				String deptTitle = rs.getString("D.DEPT_TITLE");
-				String jobName = rs.getString("J.JOB_NAME");
+				String empId = rs.getString("EMP_ID");
+				String empName = rs.getString("EMP_NAME");
+				String deptTitle = rs.getString("DEPT_TITLE");
+				String jobName = rs.getString("JOB_NAME");
 			
 				System.out.printf("%s / %s / %s / %s \n",
 						empId, empName, deptTitle, jobName);
