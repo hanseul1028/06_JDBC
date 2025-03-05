@@ -1,5 +1,9 @@
 package com.kh.mvc.model.dao;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +53,20 @@ public class UserDAO {
 	 * 
 	 */
 	
+	private final String URL = "jdbc:oracle:thin:@192.168.130.17:1521:xe";
+	private final String USERNAME = "KH09_KHS";
+	private final String PASSWORD = "KH1234";
+	
+	static {
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+		} catch (ClassNotFoundException e) {
+			System.out.println("ojdc 확인");
+			
+		}
+	}
+	
+	
 	public List<UserDTO> findAll() {
 		
 		/*
@@ -58,25 +76,74 @@ public class UserDAO {
 		 *  문제점 : userDTO가 몇개가 나올 지 알 수 없음
 		 */
 		
-		List<UserDTO> list = new ArrayList<UserDTO>();
+		List<UserDTO> list = new ArrayList();
 		String sql = "SELECT"
-				+	"USER_NO"
-				+ ", USER_ID"
-				+ ", USER_PW"
-				+ ", USER_NAME"
-				+ ", ENROLL_DATE "
-				+ "FROM "
-				+ "TB_USER "
-				+ "ORDER "
-				+ "BY "
-				+ "ENROLL_DATE DESC";
-				
+										+	"USER_NO"
+										+ ", USER_ID"
+										+ ", USER_PW"
+										+ ", USER_NAME"
+										+ ", ENROLL_DATE "
+										+ "FROM "
+											+ "TB_USER "
+										+ "ORDER "
+											+ "BY "
+											+ "ENROLL_DATE DESC";
 		
-		return;
+		return list;
 	}
+
+	/*
+	 * @param user 사용자가 입력한 아이디 / 비밀번호 / 이름이 각각 필드에 대입되어 있음
+	 * @return 미정
+	 */
+	public void insertUser(UserDTO user) {
+		
+//		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		String sql = "INSERT "
+								 + "INTO "
+								 		+ "TB_USER "
+							+ "VALUES "
+										+ "("
+										+ "SEQ_USER_NO.NEXTVAL"
+									+ ", ?"
+									+ ", ?"
+									+ ", ?"
+									+ ", SYSDATE "
+										+ ")";
+		
+		int result = 0;
+		try {
+//			conn = DriverManager.getConnection(URL,USERNAME, PASSWORD);
+			
+			// conn.setAutoCommit(false);
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, user.getUserId());
+			pstmt.setString(2, user.getUserPw());
+			pstmt.setString(3, user.getUserName());
+		
+			result = pstmt.executeUpdate();
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(pstmt != null && !pstmt.isClosed() ) pstmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if(conn != null) conn.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
 }
-
-
 
 
 
