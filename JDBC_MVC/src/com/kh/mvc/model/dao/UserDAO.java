@@ -1,9 +1,6 @@
 package com.kh.mvc.model.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,13 +64,20 @@ public class UserDAO {
 	}
 	
 	
-	public List<UserDTO> findAll() {
+	public List<UserDTO> findAll(Connection conn) {
 		
 		/*
 		 * VO / DTO / Entity
 		 *  
 		 *  1명의 회원의 정보는 1개의 UserDTO 객체의 필드에 값을 담아야겠다
 		 *  문제점 : userDTO가 몇개가 나올 지 알 수 없음
+		 *  
+		 *   테이블의 한 행의 데이터를 담기위해 사용한다
+     * 
+     * (여러 개의 정보를 담는것은 배열, 리스트,맵,set)
+     * 배열은 할당 해야하는데 몇칸인지 몰라
+     * 맵은 key를 알아야하는데 key를 몰라
+     * 따라서 list의 ArrayList에 담자
 		 */
 		
 		List<UserDTO> list = new ArrayList();
@@ -83,22 +87,63 @@ public class UserDAO {
 										+ ", USER_PW"
 										+ ", USER_NAME"
 										+ ", ENROLL_DATE "
-										+ "FROM "
+									+ "FROM "
 											+ "TB_USER "
 										+ "ORDER "
 											+ "BY "
 											+ "ENROLL_DATE DESC";
-		
-		return list;
-	}
 
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement(sql);
+			rset = pstmt.executeQuery();
+			
+			while(rset.next()) {
+				UserDTO user = new UserDTO();
+				
+				user.setUserNo(rset.getInt("USER_NO"));
+				user.setUserId(rset.getString("USER_ID"));
+				user.setUserPw(rset.getString("USER_PW"));
+	      user.setUserName(rset.getString("USER_NAME"));
+	      user.setEnrollDate(rset.getDate("ENROLL_DATE"));
+				
+				list.add(user);
+			}
+			
+		} catch (SQLException e) {
+				e.printStackTrace();
+				System.out.println("오타 확인");
+		}
+		
+			try {
+				if(rset != null) {
+				rset.close();
+				}
+			} catch (SQLException e) {
+				System.out.println("DB서버 이상");
+			}
+			try {
+				if(conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			return list;
+			
+			}
+		
 	/*
 	 * @param user 사용자가 입력한 아이디 / 비밀번호 / 이름이 각각 필드에 대입되어 있음
 	 * @return 미정
 	 */
-	public void insertUser(UserDTO user) {
+	public int insertUser(UserDTO user) {
 		
-//		Connection conn = null;
+		Connection conn = null;
 		PreparedStatement pstmt = null;
 		
 		String sql = "INSERT "
@@ -114,10 +159,12 @@ public class UserDAO {
 										+ ")";
 		
 		int result = 0;
+		
 		try {
-//			conn = DriverManager.getConnection(URL,USERNAME, PASSWORD);
+			conn = DriverManager.getConnection(URL,USERNAME, PASSWORD);
 			
 			// conn.setAutoCommit(false);
+			
 			pstmt = conn.prepareStatement(sql);
 			
 			pstmt.setString(1, user.getUserId());
@@ -125,6 +172,7 @@ public class UserDAO {
 			pstmt.setString(3, user.getUserName());
 		
 			result = pstmt.executeUpdate();
+			
 			
 		}catch(SQLException e) {
 			e.printStackTrace();

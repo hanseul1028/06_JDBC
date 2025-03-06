@@ -3,15 +3,14 @@ package com.kh.mvc.model.dto;
 import java.sql.Date;
 
 public class UserDTO {
-
 	private int userNo;
+	
 	private String userId;
 	private String userPw;
 	private String userName;
 	private Date enrollDate;
-	public int getUserNo() {
-		return userNo;
-	}
+	
+	
 	public void setUsrNo(int usrNo) {
 		this.userNo = usrNo;
 	}
@@ -51,11 +50,6 @@ public class UserDTO {
 		this.userPw = userPw;
 		this.userName = userName;
 		this.enrollDate = enrollDate;
-	}
-	@Override
-	public String toString() {
-		return "UserDTO [userNo=" + userNo + ", userId=" + userId + ", userPw=" + userPw + ", userName=" + userName
-				+ ", enrollDate=" + enrollDate + "]";
 	}
 	
 }

@@ -23,6 +23,7 @@ public class jdbcUtil {
 		final String PASSWORD = "KH1234";
 		
 		Connection conn = null;
+		
 		try {
 			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			
@@ -35,7 +36,7 @@ public class jdbcUtil {
 	
 	public static void  close(Statement stmt) {
 		try {
-			if(stmt != null) {
+			if(stmt != null){
 				stmt.close();
 			}
 		} catch (SQLException e) {
@@ -44,23 +45,4 @@ public class jdbcUtil {
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

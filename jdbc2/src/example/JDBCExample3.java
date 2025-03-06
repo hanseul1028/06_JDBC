@@ -61,7 +61,7 @@ public class JDBCExample3 {
 			pstmt.setString(3, pw);
 			
 			/* 5. PreparedStatement 객체를 이용해서 SQL을 DB로 전달 후 수행
-		   1) SELECT문인 경우 : executeGuery() -> ResultSet으로 반환
+		   1) SELECT문인 경우 : executeQuery() -> ResultSet으로 반환
 		   2) DML문 : executeUpdate() -> 결과 행의 개수(int) 반환 */
 			
 			int result = pstmt.executeUpdate();

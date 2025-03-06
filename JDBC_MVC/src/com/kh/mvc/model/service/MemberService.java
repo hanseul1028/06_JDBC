@@ -20,14 +20,14 @@ public class MemberService {
 	
 	public List<UserDTO> findAll(){
 		
-		Connection conn = jdbcUtil.getConncetion();
+		Connection conn = jdbcUtil.getConnection();
 		
 		List<UserDTO> list = userDao.findAll(conn);
 		
 		
-		return list;
-		
-		
+		return list;		
 	}
+	
+	
 
 }
